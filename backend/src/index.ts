@@ -1,18 +1,32 @@
 import express from "express";
 import dotenv from "dotenv";
+import path from "path";
+import usersRouter from "./modules/users/user.routes";
+import { knex } from "./db/knex";
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
-const PORT = process.env.PORT || 3300;
-
 app.use(express.json());
 
-// test route
-app.get("/", (req, res) => {
-  res.json({ message: "API is running 🚀" });
+// health + проверка коннекта к БД
+app.get("/health", async (_req, res, next) => {
+  try {
+    await knex.raw("select 1");
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// API
+app.use("/api/users", usersRouter);
+
+// централизованный перехват ошибок
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "internal_error" });
 });
+
+const PORT = Number(process.env.PORT || 3300);
+app.listen(PORT, () => console.log(`API on :${PORT}`));

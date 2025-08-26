@@ -1,11 +1,7 @@
 FROM node:20-alpine
-
 WORKDIR /usr/src/app
-
-COPY package*.json tsconfig.json ./
-
+COPY package*.json ./
 RUN npm install
-
 COPY . .
-
-CMD ["npm", "run", "dev"]
+EXPOSE 3300
+CMD ["npm","run","dev"]
