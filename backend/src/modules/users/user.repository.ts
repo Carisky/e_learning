@@ -11,6 +11,16 @@ export async function findByEmail(email: string): Promise<User | undefined> {
   return knex<User>(TABLE).where({ email }).first();
 }
 
+export async function findByEmailWithRole(
+  email: string
+): Promise<(User & { role: string }) | undefined> {
+  return knex<User>(TABLE)
+    .select("users.*", "roles.name as role")
+    .leftJoin("roles", "users.role_id", "roles.id")
+    .where("users.email", email)
+    .first();
+}
+
 export async function list(limit = 20, offset = 0): Promise<User[]> {
   return knex<User>(TABLE).select("*").limit(limit).offset(offset).orderBy("id", "asc");
 }
