@@ -1,0 +1,41 @@
+# Общие
+.DS_Store
+*.log
+*.lock
+*.tmp
+*.swp
+*.swo
+.env
+.env.*
+!.env.example
+
+# Node / Next.js
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/.turbo
+frontend/.cache
+
+# npm / yarn / pnpm
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# TypeScript
+frontend/*.tsbuildinfo
+
+# PHP / Composer
+backend/vendor
+backend/composer.lock
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# IDE / редакторы
+.vscode/
+.idea/
+*.iml
+
+# System
+Thumbs.db
