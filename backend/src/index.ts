@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import usersRouter from "./modules/users/user.routes";
+import authRouter from "./modules/auth/auth.routes";
 import { knex } from "./db/knex";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -20,6 +21,7 @@ app.get("/health", async (_req, res, next) => {
 });
 
 // API
+app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 
 // централизованный перехват ошибок
