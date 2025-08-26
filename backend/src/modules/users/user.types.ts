@@ -21,3 +21,5 @@ export interface UpdateUserDTO {
   email?: string;
   password?: string; // raw
 }
+
+export type UserDTO = Omit<User, "password">;

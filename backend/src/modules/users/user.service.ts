@@ -1,5 +1,5 @@
 import * as repo from "./user.repository";
-import { CreateUserDTO, UpdateUserDTO, User } from "./user.types";
+import { CreateUserDTO, UpdateUserDTO, User, UserDTO } from "./user.types";
 import bcrypt from "bcryptjs";
 
 function assertCreate(dto: CreateUserDTO) {
@@ -13,24 +13,31 @@ function assertUpdate(dto: UpdateUserDTO) {
   if (dto.password && dto.password.length < 6) throw new Error("password min 6 chars");
 }
 
-export async function getById(id: number): Promise<User | undefined> {
-  return repo.findById(id);
+function sanitize(user: User): UserDTO {
+  const { password, ...rest } = user;
+  return rest;
+}
+
+export async function getById(id: number): Promise<UserDTO | undefined> {
+  const user = await repo.findById(id);
+  return user && sanitize(user);
 }
 
 export async function getList(limit?: number, offset?: number) {
   const [items, total] = await Promise.all([repo.list(limit, offset), repo.count()]);
-  return { items, total };
+  return { items: items.map(sanitize), total };
 }
 
-export async function createUser(dto: CreateUserDTO): Promise<User> {
+export async function createUser(dto: CreateUserDTO): Promise<UserDTO> {
   assertCreate(dto);
   const exists = await repo.findByEmail(dto.email);
   if (exists) throw new Error("email already in use");
   const hash = await bcrypt.hash(dto.password, 10);
-  return repo.create({ ...dto, password: hash });
+  const created = await repo.create({ ...dto, password: hash });
+  return sanitize(created);
 }
 
-export async function updateUser(id: number, dto: UpdateUserDTO): Promise<User | undefined> {
+export async function updateUser(id: number, dto: UpdateUserDTO): Promise<UserDTO | undefined> {
   assertUpdate(dto);
   if (dto.email) {
     const other = await repo.findByEmail(dto.email);
@@ -38,7 +45,8 @@ export async function updateUser(id: number, dto: UpdateUserDTO): Promise<User |
   }
   const data: UpdateUserDTO = { ...dto };
   if (dto.password) data.password = await bcrypt.hash(dto.password, 10);
-  return repo.update(id, data);
+  const updated = await repo.update(id, data);
+  return updated && sanitize(updated);
 }
 
 export async function deleteUser(id: number): Promise<void> {
