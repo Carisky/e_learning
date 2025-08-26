@@ -23,13 +23,13 @@ export const authApi = createApi({
   baseQuery,
   endpoints: (build) => ({
     login: build.mutation<AuthResponse, LoginRequest>({
-      query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+      query: (body) => ({ url: '/api/auth/login', method: 'POST', body }),
     }),
     register: build.mutation<User, RegisterRequest>({
-      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+      query: (body) => ({ url: '/api/auth/register', method: 'POST', body }),
     }),
     me: build.query<User, void>({
-      query: () => ({ url: '/auth/me' }),
+      query: () => ({ url: '/api/auth/me' }),
     }),
   }),
 });

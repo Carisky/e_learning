@@ -8,15 +8,15 @@ export const usersApi = createApi({
   tagTypes: ['Users'],
   endpoints: (build) => ({
     getUsers: build.query<User[], void>({
-      query: () => '/users',
+      query: () => '/api/users',
       providesTags: ['Users'],
     }),
     getUser: build.query<User, number>({
-      query: (id) => `/users/${id}`,
+      query: (id) => `/api/users/${id}`,
       providesTags: (_r, _e, id) => [{ type: 'Users', id }],
     }),
     createUser: build.mutation<User, Partial<User>>({
-      query: (body) => ({ url: '/users', method: 'POST', body }),
+      query: (body) => ({ url: '/api/users', method: 'POST', body }),
       invalidatesTags: ['Users'],
     }),
   }),

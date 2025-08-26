@@ -4,12 +4,17 @@ import path from "path";
 import usersRouter from "./modules/users/user.routes";
 import authRouter from "./modules/auth/auth.routes";
 import { knex } from "./db/knex";
-
+import cors from "cors";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 app.use(express.json());
-
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 // health + проверка коннекта к БД
 app.get("/health", async (_req, res, next) => {
   try {
