@@ -7,8 +7,6 @@ import { setCredentials, setUser } from '../model/authSlice';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSpring, animated } from '@react-spring/web';
 
-const encode = (s: string) => (typeof window === 'undefined' ? Buffer.from(s).toString('base64') : btoa(s));
-
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +18,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const body = { email: encode(email), password: encode(password) };
+    const body = { email, password };
     try {
       const { token } = await login(body).unwrap();
       localStorage.setItem('token', token);
