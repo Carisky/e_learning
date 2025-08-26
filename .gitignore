@@ -24,9 +24,8 @@ frontend/pnpm-lock.yaml
 # TypeScript
 frontend/*.tsbuildinfo
 
-# PHP / Composer
-backend/vendor
-backend/composer.lock
+# Node / node_modules
+backend/node_modules
 
 # Docker
 docker-compose.override.yml

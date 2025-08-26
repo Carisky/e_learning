@@ -18,22 +18,20 @@ services:
       - backend
 
   backend:
-    build:
+    build: 
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend
+    restart: always
     ports:
-      - "8080:80"
-    volumes:
-      - ./backend:/var/www/html
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_DATABASE=app_db
-      - DB_USERNAME=app_user
-      - DB_PASSWORD=secret
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
     depends_on:
       - db
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
 
   db:
     image: postgres:15
