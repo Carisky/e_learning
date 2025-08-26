@@ -33,7 +33,11 @@ export async function createUser(dto: CreateUserDTO): Promise<UserDTO> {
   const exists = await repo.findByEmail(dto.email);
   if (exists) throw new Error("email already in use");
   const hash = await bcrypt.hash(dto.password, 10);
-  const created = await repo.create({ ...dto, password: hash });
+  const created = await repo.create({
+    ...dto,
+    password: hash,
+    role_id: dto.role_id ?? 3,
+  });
   return sanitize(created);
 }
 
