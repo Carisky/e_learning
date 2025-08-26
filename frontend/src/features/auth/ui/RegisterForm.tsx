@@ -5,8 +5,6 @@ import { useRegisterMutation } from '../api/authApi';
 import { useRouter } from 'next/navigation';
 import { useSpring, animated } from '@react-spring/web';
 
-const encode = (s: string) => (typeof window === 'undefined' ? Buffer.from(s).toString('base64') : btoa(s));
-
 export default function RegisterForm() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -19,10 +17,10 @@ export default function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const body = {
-      name: encode(name),
-      surname: encode(surname),
-      email: encode(email),
-      password: encode(password),
+      name,
+      surname,
+      email,
+      password,
     };
     try {
       await register(body).unwrap();
