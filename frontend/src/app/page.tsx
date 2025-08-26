@@ -1,10 +1,5 @@
-import UsersList from '@/features/users/ui/UsersList';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <main>
-      <h1>Users</h1>
-      <UsersList />
-    </main>
-  );
+  redirect('/dashboard');
 }
