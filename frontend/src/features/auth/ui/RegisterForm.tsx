@@ -33,7 +33,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <animated.div style={styles}>
+
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, mx: 'auto', mt: 4 }}>
         <Typography variant="h5">Register</Typography>
         <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} />
@@ -42,6 +42,6 @@ export default function RegisterForm() {
         <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button type="submit" variant="contained" disabled={isLoading}>Register</Button>
       </Box>
-    </animated.div>
+
   );
 }
