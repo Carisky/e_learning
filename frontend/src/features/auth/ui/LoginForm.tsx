@@ -4,7 +4,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { useLoginMutation, authApi } from '../api/authApi';
 import { useAppDispatch } from '@/store/hooks';
 import { setCredentials, setUser } from '../model/authSlice';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSpring, animated } from '@react-spring/web';
 
 const encode = (s: string) => (typeof window === 'undefined' ? Buffer.from(s).toString('base64') : btoa(s));
@@ -15,6 +15,7 @@ export default function LoginForm() {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const styles = useSpring({ from: { opacity: 0, y: -20 }, to: { opacity: 1, y: 0 } });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,10 +24,12 @@ export default function LoginForm() {
     try {
       const { token } = await login(body).unwrap();
       localStorage.setItem('token', token);
+      document.cookie = `access_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
       dispatch(setCredentials({ token }));
       const user = await dispatch(authApi.endpoints.me.initiate()).unwrap();
       dispatch(setUser(user));
-      router.push('/dashboard');
+      const next = searchParams.get('next');
+      router.push(next || '/dashboard');
     } catch (e) {
       console.error(e);
     }
