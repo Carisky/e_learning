@@ -17,26 +17,38 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
-export const baseQuery: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
-  let result = await rawBaseQuery(args, api, extraOptions);
+// тип ответа /api/auth/refresh
+type RefreshResponse = { token: string };
 
-  if (result.error && result.error.status === 401) {
-    const refresh = await rawBaseQuery(
-      { url: '/api/auth/refresh', method: 'POST' },
-      api,
-      extraOptions,
-    );
+function isRefreshResponse(d: unknown): d is RefreshResponse {
+  return typeof d === 'object'
+    && d !== null
+    && 'token' in d
+    && typeof (d as Record<string, unknown>).token === 'string';
+}
 
-    const token = (refresh.data as any)?.token as string | undefined;
-    if (token) {
-      localStorage.setItem('token', token);
-      result = await rawBaseQuery(args, api, extraOptions);
+export const baseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
+  async (args, api, extraOptions) => {
+    let result = await rawBaseQuery(args, api, extraOptions);
+
+    if (result.error && result.error.status === 401) {
+      const refresh = await rawBaseQuery(
+        { url: '/api/auth/refresh', method: 'POST' },
+        api,
+        extraOptions
+      );
+
+      if (isRefreshResponse(refresh.data)) {
+        const { token } = refresh.data;
+        if (typeof window !== 'undefined') localStorage.setItem('token', token);
+        // повтор исходного запроса уже с новым токеном
+        result = await rawBaseQuery(args, api, extraOptions);
+      } else {
+        // опционально: зачистка токена/логаут
+        if (typeof window !== 'undefined') localStorage.removeItem('token');
+      }
     }
-  }
 
-  return result;
-};
+    return result;
+  };
+
