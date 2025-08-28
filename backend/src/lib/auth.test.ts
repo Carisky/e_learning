@@ -1,4 +1,4 @@
-import { authMiddleware, requireRole, requireSelfOrRole, signToken, type AuthRequest } from './auth';
+import { authMiddleware, requireRole, requireSelfOrRole, signToken, optionalAuth, type AuthRequest } from './auth';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import type { Response } from 'express';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -99,5 +99,28 @@ describe('requireSelfOrRole', () => {
     requireSelfOrRole('admin')(req, res, next);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ error: 'forbidden' });
+  });
+});
+
+describe('optionalAuth', () => {
+  beforeEach(() => { process.env.JWT_SECRET = 'testsecret'; });
+
+  it('calls next when header missing', () => {
+    const req = { headers: {} } as unknown as AuthRequest;
+    const res = makeRes();
+    const next = vi.fn();
+    optionalAuth(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(req.user).toBeUndefined();
+  });
+
+  it('sets user when token provided', () => {
+    const token = jwt.sign({ id: 9, role: 'user' }, 'testsecret');
+    const req = { headers: { authorization: `Bearer ${token}` } } as unknown as AuthRequest;
+    const res = makeRes();
+    const next = vi.fn();
+    optionalAuth(req, res, next);
+    expect(req.user).toMatchObject({ id: 9, role: 'user' });
+    expect(next).toHaveBeenCalled();
   });
 });

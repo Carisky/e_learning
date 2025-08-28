@@ -23,7 +23,10 @@ export async function register(req: Request, res: Response) {
 
 export async function me(req: AuthRequest, res: Response) {
   const user = await usersService.getById(req.user!.id);
-  res.json(user);
+  if (!user) return res.status(404).json({ error: "not_found" });
+  // Map backend user DTO to frontend shape: add role string from JWT and omit role_id
+  const { id, name, surname, email } = user as any;
+  res.json({ id, name, surname, email, role: req.user!.role });
 }
 
 export async function refresh(req: Request, res: Response) {

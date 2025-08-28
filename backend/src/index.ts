@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import usersRouter from "./modules/users/user.routes";
 import authRouter from "./modules/auth/auth.routes";
+import coursesRouter from "./modules/courses/course.routes";
 import { knex } from "./db/knex";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -31,6 +32,7 @@ app.get("/health", async (_req, res, next) => {
 // API
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/courses", coursesRouter);
 
 // централизованный перехват ошибок
 app.use((err: any, _req: any, res: any, _next: any) => {

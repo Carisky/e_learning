@@ -51,3 +51,18 @@ export function requireSelfOrRole(...roles: string[]) {
     return res.status(403).json({ error: "forbidden" });
   };
 }
+
+export function optionalAuth(req: AuthRequest, _res: Response, next: NextFunction) {
+  const auth = req.headers.authorization;
+  if (auth) {
+    const token = auth.split(" ")[1];
+    if (token) {
+      try {
+        const secret = process.env.JWT_SECRET || "secret";
+        const payload = jwt.verify(token, secret) as JwtUser;
+        req.user = payload;
+      } catch {}
+    }
+  }
+  next();
+}

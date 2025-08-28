@@ -41,6 +41,30 @@ const swaggerDocument = {
           password: { type: "string", format: "password" },
         },
       },
+      Course: {
+        type: "object",
+        properties: {
+          id: { type: "integer", example: 1 },
+          title: { type: "string", example: "Course" },
+          description: { type: "string", example: "About course" },
+          price: { type: "integer", example: 1000 },
+          duration: { type: "integer", example: 60 },
+          preview_url: { type: "string" },
+        },
+      },
+      CreateCourseRequest: {
+        type: "object",
+        required: ["title", "description", "price", "duration"],
+        properties: {
+          title: { type: "string" },
+          description: { type: "string" },
+          price: { type: "integer" },
+          duration: { type: "integer" },
+          category_id: { type: "integer" },
+          author_id: { type: "integer" },
+          preview_url: { type: "string" },
+        },
+      },
     },
   },
   paths: {
@@ -220,6 +244,68 @@ const swaggerDocument = {
         ],
         responses: {
           "204": { description: "Deleted successfully" },
+        },
+      },
+    },
+    "/courses": {
+      get: {
+        tags: ["courses"],
+        summary: "List courses",
+        responses: {
+          "200": {
+            description: "Array of courses",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: { $ref: "#/components/schemas/Course" },
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ["courses"],
+        summary: "Create course",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/CreateCourseRequest" },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Created course",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Course" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/courses/{id}": {
+      get: {
+        tags: ["courses"],
+        summary: "Get course by id",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "integer" } },
+        ],
+        responses: {
+          "200": {
+            description: "Course",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Course" },
+              },
+            },
+          },
+          "404": { description: "Not found" },
         },
       },
     },
