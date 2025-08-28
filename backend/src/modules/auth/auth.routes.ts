@@ -7,6 +7,7 @@ const router = Router();
 
 router.post("/login", ah(ctrl.login));
 router.post("/register", ah(ctrl.register));
+router.post("/refresh", ah(ctrl.refresh));
 router.get("/me", authMiddleware, ah(ctrl.me));
 
 export default router;

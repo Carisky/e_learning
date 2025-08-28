@@ -26,6 +26,7 @@ frontend/*.tsbuildinfo
 
 # Node / node_modules
 backend/node_modules
+backend/coverage
 
 # Docker
 docker-compose.override.yml

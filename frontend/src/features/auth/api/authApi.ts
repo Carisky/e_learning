@@ -31,7 +31,10 @@ export const authApi = createApi({
     me: build.query<User, void>({
       query: () => ({ url: '/api/auth/me' }),
     }),
+    refresh: build.mutation<AuthResponse, void>({
+      query: () => ({ url: '/api/auth/refresh', method: 'POST' }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useMeQuery } = authApi;
+export const { useLoginMutation, useRegisterMutation, useMeQuery, useRefreshMutation } = authApi;
